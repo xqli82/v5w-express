@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "save":"git add . && git commit -m 'save more'",
+    "save":"git add . && git commit -m \"save more\"",
     "push":"git push -u origin master"
   },
   "repository": {
