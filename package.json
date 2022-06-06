@@ -4,7 +4,9 @@
   "description": "use typescript to build a powerful tool for express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "save":"git add . && git commit -m 'save more'",
+    "push":"git push -u origin master"
   },
   "repository": {
     "type": "git",
