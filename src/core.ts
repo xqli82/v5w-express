@@ -16,7 +16,7 @@ export const CreatServer: any = function (obj?: AppAppend) {
         routes = Routes
     }
 
-    console.log(routes)
+    console.log('routes:',routes)
     routes.forEach(item => {
         app[item.method](item.path, ...item.middleware, item.handler)
     })
