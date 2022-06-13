@@ -1,11 +1,21 @@
-import express from 'express'
+import {CreatServer} from './src/core'
+import {Routes} from './src/router'
+import './controller/post'
 
-const app = express()
+// console.log(Routes)
+const app = CreatServer(Routes)
 
-app.get('/',(req,res)=>{
-    res.send('hello world')
-})
-
-app.listen(3000,()=>{
+app.listen(3000,function(){
     console.log('server is running on port:3000')
 })
+
+
+
+// import express from "express"
+// const app = express()
+// app.get('/',function(req,res){
+//     res.send('hello')
+// })
+// app.listen(3000,function(){
+//     console.log('server running')
+// })
