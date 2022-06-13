@@ -1,29 +1,35 @@
 import { Routes } from '../router'
-import { join } from 'path'
-import { Route } from '../types'
+import { Route, MiddleWare } from '../types'
 
+//get method
 export const GET = (subPath: string = ""): MethodDecorator => {
     return (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
         if (!(target as any)['routes']) {
             (target as any)['routes'] = []
         }
+        let mids = (target as any)['mids-' + String(propertyKey)] || [];
         (target as any)['routes'].push({
             method: 'get',
             path: subPath,
             handler: descriptor.value,
-            middleware: []
+            middleware: mids
         })
-
-        // console.log(target)
     }
 }
 
+//post method
 export const POST = (subPath: string): MethodDecorator => {
     return (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
-        (target as any)['routes'][propertyKey].method = 'post';
-        (target as any)['routes'][propertyKey].path = subPath;
-        (target as any)['routes'][propertyKey].handler = descriptor.value;
-        (target as any)['routes'][propertyKey].middleware = [];
+        if (!(target as any)['routes']) {
+            (target as any)['routes'] = []
+        }
+        let mids = (target as any)['mids-' + String(propertyKey)] || [];
+        (target as any)['routes'].push({
+            method: 'post',
+            path: subPath,
+            handler: descriptor.value,
+            middleware: mids
+        })
     }
 }
 
@@ -33,26 +39,39 @@ export const PATH = (mainPath: string): ClassDecorator => {
         let list = (target.prototype.routes as Route[]) || [];
         list.forEach(item => {
             let { path, method, handler, middleware } = item;
-            let mp = mainPath.replace('/', '')
-            path = mp ? ('/' + mp + '/') : '/' + path.replace('/', '')
-
+            // console.log('main:', mainPath, 'path:', path)
+            let mp = mainPath.replace('/', '');
+            let mp1 = mp ? ('/' + mp + '/') : '/';
+            path = mp1 + path.replace('/', '');
             Routes.push({
-                path,
+                path: path,
                 method,
                 handler,
                 middleware
             })
         })
-
     }
 }
 
-//middleware
-export const MID = (mids: string[] | string): ClassDecorator => {
+//class middleware
+export const ClassMiddleware = (mids: MiddleWare[] = []): ClassDecorator => {
     return (target: Function) => {
-        const keys = target.prototype['routes'].keys;
-        (keys as string[]).forEach(item => {
-            target.prototype['routes'][item]['middleware'] = target.prototype['routes'][item]['middleware'].concat(mids)
-        });
+        let list = (target.prototype.routes as Route[]) || [];
+        target.prototype.routes = list.map(item => {
+            let { path, method, handler, middleware } = item;
+            return {
+                path,
+                method,
+                handler,
+                middleware: [...middleware, ...mids]
+            }
+        })
+    }
+}
+
+//method middleware
+export const MethodMiddleware = (mids: MiddleWare[] = []): MethodDecorator => {
+    return (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
+        (target as any)['mids-' + String(propertyKey)] = mids
     }
 }

@@ -16,6 +16,7 @@ export type Route = {
 }
 
 export type AppAppend={
-    middleware?:MiddleWare[]
+    middleware?:MiddleWare[],
+    routes?:Route[]
 }
 
